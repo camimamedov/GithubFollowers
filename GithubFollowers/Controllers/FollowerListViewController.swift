@@ -7,14 +7,15 @@
 
 import UIKit
 
-class FollowerListViewController: UIViewController, UICollectionViewDelegate {
-    
+class FollowerListViewController: UIViewController, UICollectionViewDelegate, UISearchResultsUpdating {
+   
     enum Section{
         case main
     }
     
     var username: String!
     var followers: [FollowerData] = []
+    var filteredFollowers: [FollowerData] = []
     var page: Int = 1
     var hasMoreFollowers = true
     
@@ -28,6 +29,7 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate {
         configureCollectionView()
         getFollowers()
         configureDataSource()
+        configureSearchController()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -40,7 +42,7 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate {
         showLoadingView()
         Task{
             do {
-                let followers = try await NetworkManager.shared.getFollowers(for: self.username, page: page)
+                let followers = try await NetworkManager.shared.getFollowers(for: username, page: page)
                 dismissLoadingView()
                 hasMoreFollowers = (followers.count >= 100)
                 self.followers.append(contentsOf: followers)
@@ -49,7 +51,7 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate {
                     showEmptyStateView(message: "This user doesn't have any followers. Go follow them.", in: view)
                     return
                 }
-                updateData()
+                updateData(on: self.followers)
             }
             catch{
                 if let error = error as? GFError{
@@ -105,7 +107,16 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate {
         })
     }
     
-    func updateData(){
+    func configureSearchController(){
+        let searchController = UISearchController()
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.placeholder = "Search for a username"
+        searchController.obscuresBackgroundDuringPresentation = false
+        
+        navigationItem.searchController = searchController
+    }
+    
+    func updateData(on followers: [FollowerData]){
         var snapshot = NSDiffableDataSourceSnapshot<Section, FollowerData>()
         snapshot.appendSections([.main])
         snapshot.appendItems(followers)
@@ -125,4 +136,18 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate {
             getFollowers()
         }
     }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let filter = searchController.searchBar.text, !filter.isEmpty else {
+            updateData(on: followers)
+            return
+        }
+        
+        filteredFollowers = followers.filter({ follower in
+            follower.login.lowercased().contains(filter.lowercased())
+        })
+        
+        updateData(on: filteredFollowers)
+    }
+    
 }
