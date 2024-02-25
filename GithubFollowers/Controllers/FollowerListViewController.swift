@@ -1,0 +1,128 @@
+//
+//  FollowerListViewController.swift
+//  GithubFollowers
+//
+//  Created by Cami Mamedov on 11.02.24.
+//
+
+import UIKit
+
+class FollowerListViewController: UIViewController, UICollectionViewDelegate {
+    
+    enum Section{
+        case main
+    }
+    
+    var username: String!
+    var followers: [FollowerData] = []
+    var page: Int = 1
+    var hasMoreFollowers = true
+    
+    var collectionView: UICollectionView!
+    var dataSource: UICollectionViewDiffableDataSource<Section, FollowerData>!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        configureViewController()
+        configureCollectionView()
+        getFollowers()
+        configureDataSource()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+    
+    func getFollowers(){
+        showLoadingView()
+        Task{
+            do {
+                let followers = try await NetworkManager.shared.getFollowers(for: self.username, page: page)
+                dismissLoadingView()
+                hasMoreFollowers = (followers.count >= 100)
+                self.followers.append(contentsOf: followers)
+                
+                if self.followers.isEmpty{
+                    showEmptyStateView(message: "This user doesn't have any followers. Go follow them.", in: view)
+                    return
+                }
+                updateData()
+            }
+            catch{
+                if let error = error as? GFError{
+                    var message = "Network error"
+                    switch error {
+                    case .NetworkError:
+                        message = "Invalid response from server. Please try again."
+                    case .UrlError:
+                        message = "This username created an invalid request. Please try again."
+                    }
+                    
+                    self.presentGFAlertOnMainThread(title: "Something went wrong.", message: message, buttonTitle: "Ok")
+                    
+                    return
+                }
+            }
+        }
+    }
+    
+    func createColumnFlowLayout() -> UICollectionViewFlowLayout{
+        let width = view.bounds.width
+        let padding: CGFloat = 12
+        let minimumItemSpacing: CGFloat = 10
+        let availableWidth = width - (padding * 2) - (minimumItemSpacing * 2)
+        let itemWidth = availableWidth / 3
+        
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.sectionInset = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+        flowLayout.itemSize = CGSize(width: itemWidth, height: itemWidth + 40)
+        
+        return flowLayout
+    }
+    
+    func configureViewController(){
+        view.backgroundColor = .systemBackground
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    func configureCollectionView(){
+        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createColumnFlowLayout())
+        view.addSubview(collectionView)
+        collectionView.delegate = self
+        collectionView.backgroundColor = .systemBackground
+        collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseID)
+    }
+    
+    func configureDataSource(){
+        dataSource = UICollectionViewDiffableDataSource<Section, FollowerData>(collectionView: collectionView, cellProvider: {
+            (collectionView, indexPath, follower) -> UICollectionViewCell? in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCell.reuseID, for: indexPath) as! FollowerCell
+            cell.set(follower: follower)
+            return cell
+        })
+    }
+    
+    func updateData(){
+        var snapshot = NSDiffableDataSourceSnapshot<Section, FollowerData>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(followers)
+        
+        DispatchQueue.main.async {
+            self.dataSource.apply(snapshot, animatingDifferences: true)
+        }
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.height
+        
+        if offsetY > contentHeight - height && hasMoreFollowers {
+            page += 1
+            getFollowers()
+        }
+    }
+}
