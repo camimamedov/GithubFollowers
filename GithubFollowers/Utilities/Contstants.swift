@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+enum SFSymbols
+{
+    static let map = "mappin.and.ellipse"
+    static let repos = "folder"
+    static let gists = "text.alignleft"
+    static let followers = "heart"
+    static let following = "person.2"
+}

@@ -38,7 +38,7 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
-    func getFollowers(){
+    private func getFollowers(){
         showLoadingView()
         Task{
             do {
@@ -71,7 +71,7 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
         }
     }
     
-    func createColumnFlowLayout() -> UICollectionViewFlowLayout{
+    private func createColumnFlowLayout() -> UICollectionViewFlowLayout{
         let width = view.bounds.width
         let padding: CGFloat = 12
         let minimumItemSpacing: CGFloat = 10
@@ -85,12 +85,12 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
         return flowLayout
     }
     
-    func configureViewController(){
+    private func configureViewController(){
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    func configureCollectionView(){
+    private func configureCollectionView(){
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createColumnFlowLayout())
         view.addSubview(collectionView)
         collectionView.delegate = self
@@ -98,7 +98,7 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
         collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseID)
     }
     
-    func configureDataSource(){
+    private func configureDataSource(){
         dataSource = UICollectionViewDiffableDataSource<Section, FollowerData>(collectionView: collectionView, cellProvider: {
             (collectionView, indexPath, follower) -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCell.reuseID, for: indexPath) as! FollowerCell
@@ -107,7 +107,7 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
         })
     }
     
-    func configureSearchController(){
+    private func configureSearchController(){
         let searchController = UISearchController()
         searchController.searchResultsUpdater = self
         searchController.searchBar.placeholder = "Search for a username"
@@ -116,7 +116,7 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
         navigationItem.searchController = searchController
     }
     
-    func updateData(on followers: [FollowerData]){
+    private func updateData(on followers: [FollowerData]){
         var snapshot = NSDiffableDataSourceSnapshot<Section, FollowerData>()
         snapshot.appendSections([.main])
         snapshot.appendItems(followers)
@@ -137,6 +137,16 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let follower = followers[indexPath.item]
+        
+        let infoViewController = UserInfoViewController()
+        infoViewController.username = follower.login
+        
+        let navigationViewController = UINavigationController(rootViewController: infoViewController)
+        present(navigationViewController, animated: true)
+    }
+    
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter = searchController.searchBar.text, !filter.isEmpty else {
             updateData(on: followers)
@@ -149,5 +159,4 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
         
         updateData(on: filteredFollowers)
     }
-    
 }

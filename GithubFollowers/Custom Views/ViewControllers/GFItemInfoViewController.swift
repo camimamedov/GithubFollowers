@@ -60,7 +60,7 @@ class GFItemInfoViewController: UIViewController {
             stackView.heightAnchor.constraint(equalToConstant: 50),
             
             actionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -padding),
-            actionButton.leadingAnchor.constraint(equalTo: view.leftAnchor, constant: padding),
+            actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
             actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
             actionButton.heightAnchor.constraint(equalToConstant: 44)
         ])

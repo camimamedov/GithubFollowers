@@ -35,4 +35,22 @@ final class NetworkManager{
             throw GFError.NetworkError
         }
     }
+
+    func getUserInfo(for username: String) async throws -> UserData {
+        guard let url = URL(string: baseURL + "\(username)") else {
+            throw GFError.UrlError
+        }
+        
+        let (data, _) = try await URLSession.shared.data(from: url)
+        
+        do{
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let response = try decoder.decode(UserData.self, from: data)
+            return response
+        }
+        catch{
+            throw GFError.NetworkError
+        }
+    }
 }
