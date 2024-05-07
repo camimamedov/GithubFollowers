@@ -12,6 +12,7 @@ class UserInfoViewController: UIViewController {
     let headerView = UIView()
     let profileView = UIView()
     let followersView = UIView()
+    let dateLabel = GFBodyLabel(textAlignment: .center)
     
     var username: String!
     
@@ -30,6 +31,7 @@ class UserInfoViewController: UIViewController {
                 add(childVC: GFUserInfoHeaderViewController(user: user), to: headerView)
                 add(childVC: GFRepoItemViewController(user: user), to: profileView)
                 add(childVC: GFFollowerItemViewController(user: user), to: followersView)
+                dateLabel.text = "GitHub Since \(user.createdAt.convertToDisplayFormat())"
             }
             catch{
                 if let error = error as? GFError{
@@ -45,10 +47,12 @@ class UserInfoViewController: UIViewController {
         view.addSubview(headerView)
         view.addSubview(profileView)
         view.addSubview(followersView)
+        view.addSubview(dateLabel)
         
         headerView.translatesAutoresizingMaskIntoConstraints = false
         profileView.translatesAutoresizingMaskIntoConstraints = false
         followersView.translatesAutoresizingMaskIntoConstraints = false
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
         
         headerView.backgroundColor = .systemBackground
         profileView.backgroundColor = .systemBackground
@@ -68,7 +72,12 @@ class UserInfoViewController: UIViewController {
             followersView.topAnchor.constraint(equalTo: profileView.bottomAnchor, constant: 20),
             followersView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 20),
             followersView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -20),
-            followersView.heightAnchor.constraint(equalToConstant: 150)
+            followersView.heightAnchor.constraint(equalToConstant: 150),
+            
+            dateLabel.topAnchor.constraint(equalTo: followersView.bottomAnchor, constant: 20),
+            dateLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 20),
+            dateLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -20),
+            dateLabel.heightAnchor.constraint(equalToConstant: 18)
         ])
     }
     
