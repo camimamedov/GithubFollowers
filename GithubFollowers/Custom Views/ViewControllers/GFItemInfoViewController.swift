@@ -15,6 +15,7 @@ class GFItemInfoViewController: UIViewController {
     let actionButton = GFButton()
     
     var user: UserData!
+    weak var delegate: UserInfoVCDelegate!
     
     init(user: UserData){
         super.init(nibName: nil, bundle: nil)
@@ -31,6 +32,7 @@ class GFItemInfoViewController: UIViewController {
         configureBackground()
         layoutUI()
         configureStackView()
+        configureActionButton()
     }
     
     private func configureBackground(){
@@ -65,5 +67,12 @@ class GFItemInfoViewController: UIViewController {
             actionButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-
+    
+    private func configureActionButton(){
+        actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func actionButtonTapped(){
+        
+    }
 }
