@@ -7,7 +7,9 @@
 
 import Foundation
 
-enum GFError: Error{
-    case NetworkError
-    case UrlError
+enum GFError: String, Error{
+    case NetworkError = "Invalid response from server. Please try again."
+    case UrlError = "This username created an invalid request. Please try again."
+    case unableToFavorite = "There was an error favoriting this user."
+    case alreadyInFavorites = "You've already favorited this user."
 }

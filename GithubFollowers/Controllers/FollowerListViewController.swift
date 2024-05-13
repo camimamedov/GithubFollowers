@@ -59,16 +59,7 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
             }
             catch{
                 if let error = error as? GFError{
-                    var message = "Network error"
-                    switch error {
-                    case .NetworkError:
-                        message = "Invalid response from server. Please try again."
-                    case .UrlError:
-                        message = "This username created an invalid request. Please try again."
-                    }
-                    
-                    self.presentGFAlertOnMainThread(title: "Something went wrong.", message: message, buttonTitle: "Ok")
-                    
+                    self.presentGFAlertOnMainThread(title: "Something went wrong.", message: error.rawValue, buttonTitle: "Ok")
                     return
                 }
             }
@@ -92,6 +83,40 @@ class FollowerListViewController: UIViewController, UICollectionViewDelegate, UI
     private func configureViewController(){
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
+        
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFavouriteTapped))
+        navigationItem.rightBarButtonItem = addButton
+    }
+    
+    @objc private func addFavouriteTapped(){
+        showLoadingView()
+        
+        Task {
+            do{
+                let user = try await NetworkManager.shared.getUserInfo(for: username)
+                dismissLoadingView()
+                
+                let favorite = FollowerData(login: user.login, avatarUrl: user.avatarUrl)
+                
+                PersistenceManager.updateWith(favorite: favorite, actionType: .add) { [weak self] error in
+                    guard let self else { return }
+                    
+                    guard let error = error else {
+                        self.presentGFAlertOnMainThread(title: "Success", message: "You have successfully added this user to favorites list", buttonTitle: "OK")
+                        return
+                    }
+                    
+                    self.presentGFAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTitle: "OK")
+                    
+                }
+            }
+            catch{
+                dismissLoadingView()
+                if let error = error as? GFError{
+                    presentGFAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTitle: "OK")
+                }
+            }
+        }
     }
     
     private func configureCollectionView(){
