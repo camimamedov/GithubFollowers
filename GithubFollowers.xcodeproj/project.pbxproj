@@ -39,6 +39,7 @@
 		43D7D3022B80E613001120D6 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D7D3012B80E613001120D6 /* NetworkManager.swift */; };
 		43DDEF092B8B337000D1DD4D /* GFEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DDEF082B8B337000D1DD4D /* GFEmptyStateView.swift */; };
 		43DDEF0B2B8B867800D1DD4D /* UserInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DDEF0A2B8B867800D1DD4D /* UserInfoViewController.swift */; };
+		43F20C8B2BF2A42D00C970F0 /* FavoriteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F20C8A2BF2A42D00C970F0 /* FavoriteCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,6 +77,7 @@
 		43D7D3012B80E613001120D6 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		43DDEF082B8B337000D1DD4D /* GFEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFEmptyStateView.swift; sourceTree = "<group>"; };
 		43DDEF0A2B8B867800D1DD4D /* UserInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoViewController.swift; sourceTree = "<group>"; };
+		43F20C8A2BF2A42D00C970F0 /* FavoriteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				438CA6A12B8134D900A49B0B /* FollowerCell.swift */,
+				43F20C8A2BF2A42D00C970F0 /* FavoriteCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -307,6 +310,7 @@
 				436D6D322B73631200199F40 /* GFTextField.swift in Sources */,
 				43C762232B808F620099814B /* GFBodyLabel.swift in Sources */,
 				43D7D2FA2B80E3E3001120D6 /* GFError.swift in Sources */,
+				43F20C8B2BF2A42D00C970F0 /* FavoriteCell.swift in Sources */,
 				43C96F412B9490B9009282EA /* Contstants.swift in Sources */,
 				43DDEF0B2B8B867800D1DD4D /* UserInfoViewController.swift in Sources */,
 			);
