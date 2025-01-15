@@ -61,6 +61,15 @@ class SearchViewController: UIViewController {
             logoImageView.heightAnchor.constraint(equalToConstant: 200),
             logoImageView.widthAnchor.constraint(equalToConstant: 200)
         ])
+        
+        let animation = CABasicAnimation()
+        animation.keyPath = "transform.scale"
+        animation.fromValue = 0
+        animation.toValue = 1
+        animation.duration = 0.6
+        animation.repeatCount = .infinity
+        animation.autoreverses = true
+        logoImageView.layer.add(animation, forKey: "basic")
     }
     
     func configureTextField(){

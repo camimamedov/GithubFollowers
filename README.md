@@ -33,7 +33,6 @@ A Swift app built with ARKit and GitHub's API, allowing users to search for GitH
 
 ## Technologies Used
 
-- **ARKit**: Used for augmented reality features within the app.
 - **GitHub API**: Retrieves user profiles, followers, and public information.
 - **Safari Services (SFSafariViewController)**: Displays GitHub profiles directly in the app using Safari.
 - **UserDefaults**: Stores and retrieves favorite GitHub users.
